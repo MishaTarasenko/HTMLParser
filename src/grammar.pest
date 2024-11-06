@@ -1,0 +1,5 @@
+attribute = { identifier ~ "=" ~ quoted_string }
+identifier = { ASCII_ALPHA ~ ASCII_ALPHANUMERIC* }
+quoted_string = { "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+
+
