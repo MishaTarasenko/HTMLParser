@@ -33,3 +33,39 @@
 - **Конвертація у формат XML або JSON**: Це дозволяє імпортувати HTML-контент у програми, які працюють із структурованими даними.
 - **Аналіз вмісту HTML**: Можливість обробляти та витягувати текстові та атрибутивні дані дозволяє використовувати парсер для аналітичних задач, таких як аналіз контенту або пошук певних елементів.
 
+
+### Граматика
+
+html = { SOI ~ elements ~ EOI }
+
+elements = { (element | self_closed_tag)* }
+
+element = { opening_tag ~ content ~ closing_tag }
+
+opening_tag = { "<" ~ tag_name ~ attribute_list ~ ">" }
+
+closing_tag = { "</" ~ tag_name ~ ">" }
+
+self_closed_tag = { "<" ~ tag_name ~ attribute_list  ~ "/>"}
+
+tag_name = @{ ASCII_ALPHA+ ~ ASCII_DIGIT? }
+
+attribute_list = { attribute* }
+
+attribute = { identifier ~ "=" ~ quoted_string }
+
+identifier = { ASCII_ALPHA+ }
+
+quoted_string = { "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+
+content = { (element| text | self_closed_tag)* }
+
+text = @{ (!"<" ~ ANY)+ }
+
+WHITESPACE = _{ " " | "\t" | "\n" | "\r" }
+
+### Як використовувати
+cargo run --release -- parse <Назва файлу> 
+
+### Crate
+https://crates.io/crates/html_parser_tarasenko
