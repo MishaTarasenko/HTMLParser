@@ -1,5 +1,5 @@
 use anyhow::Result;
-use html_parser::{parse_html, Node};
+use html_parser_tarasenko::{parse_html, Node};
 
 #[test]
 fn test_empty_html() -> Result<()> {
@@ -12,7 +12,7 @@ fn test_empty_html() -> Result<()> {
 #[test]
 fn test_simple_element() -> Result<()> {
     let input = "<div></div>";
-    let expected = vec![Node::Element(html_parser::Element {
+    let expected = vec![Node::Element(html_parser_tarasenko::Element {
         tag_name: "div".to_string(),
         attributes: vec![],
         children: vec![],
@@ -25,7 +25,7 @@ fn test_simple_element() -> Result<()> {
 #[test]
 fn test_self_closed_tag() -> Result<()> {
     let input = "<img src=\"image.png\" />";
-    let expected = vec![Node::Element(html_parser::Element {
+    let expected = vec![Node::Element(html_parser_tarasenko::Element {
         tag_name: "img".to_string(),
         attributes: vec![("src".to_string(), "image.png".to_string())],
         children: vec![],
@@ -38,10 +38,10 @@ fn test_self_closed_tag() -> Result<()> {
 #[test]
 fn test_nested_elements() -> Result<()> {
     let input = "<div><span>Text</span></div>";
-    let expected = vec![Node::Element(html_parser::Element {
+    let expected = vec![Node::Element(html_parser_tarasenko::Element {
         tag_name: "div".to_string(),
         attributes: vec![],
-        children: vec![Node::Element(html_parser::Element {
+        children: vec![Node::Element(html_parser_tarasenko::Element {
             tag_name: "span".to_string(),
             attributes: vec![],
             children: vec![Node::Text("Text".to_string())],
@@ -55,7 +55,7 @@ fn test_nested_elements() -> Result<()> {
 #[test]
 fn test_attributes() -> Result<()> {
     let input = "<a href=\"https://example.com\" title=\"Example\">Link</a>";
-    let expected = vec![Node::Element(html_parser::Element {
+    let expected = vec![Node::Element(html_parser_tarasenko::Element {
         tag_name: "a".to_string(),
         attributes: vec![
             ("href".to_string(), "https://example.com".to_string()),

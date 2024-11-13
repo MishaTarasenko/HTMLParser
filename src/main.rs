@@ -25,7 +25,7 @@ fn main() -> Result<()> {
         Commands::Parse { file } => {
             let content = fs::read_to_string(file)
                 .with_context(|| format!("Failed to read file: {}", file))?;
-            let parse_result = html_parser::parse_html(&content)
+            let parse_result = html_parser_tarasenko::parse_html(&content)
                 .with_context(|| "Failed to parse HTML content")?;
             println!("{:#?}", parse_result);
         }
