@@ -1,50 +1,69 @@
-use pest::Parser;
-use HTMLParser::*;
+use anyhow::Result;
+use html_parser::{parse_html, Node};
 
-#[cfg(test)]
-mod tests {
+#[test]
+fn test_empty_html() -> Result<()> {
+    let input = "";
+    let result = parse_html(input)?;
+    assert!(result.is_empty());
+    Ok(())
+}
 
-    use super::*;
+#[test]
+fn test_simple_element() -> Result<()> {
+    let input = "<div></div>";
+    let expected = vec![Node::Element(html_parser::Element {
+        tag_name: "div".to_string(),
+        attributes: vec![],
+        children: vec![],
+    })];
+    let result = parse_html(input)?;
+    assert_eq!(result, expected);
+    Ok(())
+}
 
-    #[test]
-    fn test_valid_attribute_with_simple_identifier_and_string() {
-        let input = r#"width="100%""#;
-        let result = Grammar::parse(Rule::attribute, input);
-        assert!(result.is_ok());
-    }
+#[test]
+fn test_self_closed_tag() -> Result<()> {
+    let input = "<img src=\"image.png\" />";
+    let expected = vec![Node::Element(html_parser::Element {
+        tag_name: "img".to_string(),
+        attributes: vec![("src".to_string(), "image.png".to_string())],
+        children: vec![],
+    })];
+    let result = parse_html(input)?;
+    assert_eq!(result, expected);
+    Ok(())
+}
 
-    #[test]
-    fn test_attribute_with_unquoted_string_should_fail() {
-        let input = r#"width=100%"#; // No quotes around 100%
-        let result = Grammar::parse(Rule::attribute, input);
-        assert!(result.is_err());
-    }
+#[test]
+fn test_nested_elements() -> Result<()> {
+    let input = "<div><span>Text</span></div>";
+    let expected = vec![Node::Element(html_parser::Element {
+        tag_name: "div".to_string(),
+        attributes: vec![],
+        children: vec![Node::Element(html_parser::Element {
+            tag_name: "span".to_string(),
+            attributes: vec![],
+            children: vec![Node::Text("Text".to_string())],
+        })],
+    })];
+    let result = parse_html(input)?;
+    assert_eq!(result, expected);
+    Ok(())
+}
 
-    #[test]
-    fn test_attribute_with_underscore_identifier_should_fail() {
-        let input = r#"data_attribute="some value""#;
-        let result = Grammar::parse(Rule::attribute, input);
-        assert!(result.is_err());
-    }
-
-    #[test]
-    fn test_attribute_with_invalid_identifier_starting_with_digit_should_fail() {
-        let input = r#"123name="value""#; // Identifier starting with a digit
-        let result = Grammar::parse(Rule::attribute, input);
-        assert!(result.is_err());
-    }
-
-    #[test]
-    fn test_attribute_with_unclosed_string_should_fail() {
-        let input = r#"width="100%"#; // Missing closing quote
-        let result = Grammar::parse(Rule::attribute, input);
-        assert!(result.is_err());
-    }
-
-    #[test]
-    fn test_attribute_with_empty_quoted_string() {
-        let input = r#"placeholder="""#;
-        let result = Grammar::parse(Rule::attribute, input);
-        assert!(result.is_ok());
-    }
+#[test]
+fn test_attributes() -> Result<()> {
+    let input = "<a href=\"https://example.com\" title=\"Example\">Link</a>";
+    let expected = vec![Node::Element(html_parser::Element {
+        tag_name: "a".to_string(),
+        attributes: vec![
+            ("href".to_string(), "https://example.com".to_string()),
+            ("title".to_string(), "Example".to_string()),
+        ],
+        children: vec![Node::Text("Link".to_string())],
+    })];
+    let result = parse_html(input)?;
+    assert_eq!(result, expected);
+    Ok(())
 }

@@ -1,9 +1,18 @@
 [package]
-name = "HTMLParser"
+name = "html_parser"
 version = "0.1.0"
+authors = ["Tarasenko Misha"]
 edition = "2021"
+description = "Базовий HTML-парсер на Rust з використанням Pest"
+documentation = "https://docs.rs/html_parser"
+repository = "https://github.com/MishaTarasenko/RustParser"
+license = "MIT"
 
 [dependencies]
-anyhow = "1.0.93"
 pest = "2.7.14"
 pest_derive = "2.7.14"
+thiserror = "1.0"
+clap = { version = "4.0", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
