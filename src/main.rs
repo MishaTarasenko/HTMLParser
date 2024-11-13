@@ -33,7 +33,7 @@ fn main() -> Result<()> {
             hrlp();
         }
         Commands::Credits => {
-            println!("HTML Parser розроблено Тарасенко Михайло.");
+            println!("HTML Parser розроблено Тарасенко Михайлом.");
         }
     }
 

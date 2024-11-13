@@ -4,7 +4,6 @@ version = "0.1.0"
 authors = ["Tarasenko Misha"]
 edition = "2021"
 description = "Базовий HTML-парсер на Rust з використанням Pest"
-documentation = "https://docs.rs/html_parser"
 repository = "https://github.com/MishaTarasenko/RustParser"
 license = "MIT"
 
