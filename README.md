@@ -1,4 +1,4 @@
-# HTML Parser
+# HTML Parser Tarasenko
 
 ## Опис
 
