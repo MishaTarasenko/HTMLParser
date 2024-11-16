@@ -1,27 +1,66 @@
+/// The starting rule of the HTML parser.
+/// It ensures that the input begins (`SOI`) and ends (`EOI`) correctly,
+/// encapsulating all HTML elements.
 html = { SOI ~ elements ~ EOI }
 
+/// Represents a sequence of HTML elements.
+/// It allows for zero or more (`*`) occurrences of either
+/// a regular `element` or a `self_closed_tag`.
 elements = { (element | self_closed_tag)* }
 
+/// Defines a standard HTML element with an opening tag,
+/// content, and a corresponding closing tag.
 element = { opening_tag ~ content ~ closing_tag }
 
+/// Represents an opening HTML tag.
+/// It consists of a `<`, followed by the `tag_name`,
+/// an optional list of attributes (`attribute_list`),
+/// and a closing `>`.
 opening_tag = { "<" ~ tag_name ~ attribute_list ~ ">" }
 
+/// Represents a closing HTML tag.
+/// It consists of `</`, followed by the `tag_name`,
+/// and a closing `>`.
 closing_tag = { "</" ~ tag_name ~ ">" }
 
-self_closed_tag = { "<" ~ tag_name ~ attribute_list  ~ "/>"}
+/// Represents a self-closing HTML tag.
+/// It consists of a `<`, followed by the `tag_name`,
+/// an optional list of attributes (`attribute_list`),
+/// and a `/>` to indicate self-closing.
+self_closed_tag = { "<" ~ tag_name ~ attribute_list ~ "/>" }
 
+/// Defines the structure of a tag name.
+/// It must start with one or more ASCII alphabetic characters (`ASCII_ALPHA+`)
+/// and can optionally be followed by a digit (`ASCII_DIGIT?`).
 tag_name = @{ ASCII_ALPHA+ ~ ASCII_DIGIT? }
 
+/// Represents a list of attributes within a tag.
+/// It allows for zero or more (`*`) `attribute` entries.
 attribute_list = { attribute* }
 
+/// Defines an individual attribute within a tag.
+/// It consists of an `identifier`, an `=`, and a `quoted_string`.
 attribute = { identifier ~ "=" ~ quoted_string }
 
+/// Defines an identifier used for attribute names.
+/// It must consist of one or more ASCII alphabetic characters (`ASCII_ALPHA+`).
 identifier = { ASCII_ALPHA+ }
 
+/// Represents a quoted string value for an attribute.
+/// It starts and ends with a double quote (`"`),
+/// and contains zero or more characters that are not double quotes.
 quoted_string = { "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
 
-content = { (element| text | self_closed_tag)* }
+/// Defines the content within an HTML element.
+/// It allows for zero or more (`*`) occurrences of either
+/// another `element`, `text`, or a `self_closed_tag`.
+content = { (element | text | self_closed_tag)* }
 
+/// Represents textual content within an HTML element.
+/// It consists of one or more characters that are not `<`.
 text = @{ (!"<" ~ ANY)+ }
 
-WHITESPACE = _{ " " | "\t" | "\n" | "\r" }
+/// Defines the whitespace characters used in the grammar.
+/// It includes space (` `), tab (`\t`), newline (`\n`), and carriage return (`\r`).
+WHITESPACE = { " " | "\t" | "\n" | "\r" }
+

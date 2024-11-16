@@ -36,33 +36,33 @@
 
 ### Граматика
 
-html = { SOI ~ elements ~ EOI }
+- html        = { SOI ~ elements ~ EOI }
 
-elements = { (element | self_closed_tag)* }
+- elements    = { (element | self_closed_tag)* }
 
-element = { opening_tag ~ content ~ closing_tag }
+- element     = { opening_tag ~ content ~ closing_tag }
 
-opening_tag = { "<" ~ tag_name ~ attribute_list ~ ">" }
+- opening_tag = { "<" ~ tag_name ~ attribute_list ~ ">" }
 
-closing_tag = { "</" ~ tag_name ~ ">" }
+- closing_tag = { "</" ~ tag_name ~ ">" }
 
-self_closed_tag = { "<" ~ tag_name ~ attribute_list  ~ "/>"}
+- self_closed_tag = { "<" ~ tag_name ~ attribute_list ~ "/>" }
 
-tag_name = @{ ASCII_ALPHA+ ~ ASCII_DIGIT? }
+- tag_name    = @{ ASCII_ALPHA+ ~ ASCII_DIGIT? }
 
-attribute_list = { attribute* }
+- attribute_list = { attribute* }
 
-attribute = { identifier ~ "=" ~ quoted_string }
+- attribute   = { identifier ~ "=" ~ quoted_string }
 
-identifier = { ASCII_ALPHA+ }
+- identifier  = { ASCII_ALPHA+ }
 
-quoted_string = { "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+- quoted_string = { "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
 
-content = { (element| text | self_closed_tag)* }
+- content     = { (element | text | self_closed_tag)* }
 
-text = @{ (!"<" ~ ANY)+ }
+- text        = @{ (!"<" ~ ANY)+ }
 
-WHITESPACE = _{ " " | "\t" | "\n" | "\r" }
+- WHITESPACE  = _{ " " | "\t" | "\n" | "\r" }
 
 ### Як використовувати
 cargo run --release -- parse <Назва файлу> 

@@ -18,6 +18,12 @@ pub enum ParseError {
     #[error("Mismatched tag: expected {expected}, found {found}")]
     MismatchedTag { expected: String, found: String },
 
+    #[error("Invalid rule: {0}")]
+    InvalidRule(String),
+
+    #[error("No matching rule found for rule: {0}")]
+    NoMatchingRule(String),
+
     #[error("IO error: {0}")]
     IOError(#[from] std::io::Error),
 }
@@ -75,6 +81,45 @@ pub fn parse_html(input: &str) -> Result<Vec<Node>, ParseError> {
     }
 
     Ok(nodes)
+}
+
+/// Parses the input with a specific rule.
+///
+/// # Arguments
+///
+/// * `rule` - The name of the rule to parse (as a string).
+/// * `input` - The input string to parse.
+///
+/// # Returns
+///
+/// * `Ok<Pair>` if the input matches the specified rule.
+/// * `Err(ParseError)` if the parsing fails or the rule is invalid.
+pub fn parse<'a>(rule: &str, input: &'a str) -> Result<Pair<'a, Rule>, ParseError> {
+    let rule_enum = match rule {
+        "html" => Rule::html,
+        "elements" => Rule::elements,
+        "element" => Rule::element,
+        "self_closed_tag" => Rule::self_closed_tag,
+        "opening_tag" => Rule::opening_tag,
+        "closing_tag" => Rule::closing_tag,
+        "tag_name" => Rule::tag_name,
+        "attribute_list" => Rule::attribute_list,
+        "attribute" => Rule::attribute,
+        "identifier" => Rule::identifier,
+        "quoted_string" => Rule::quoted_string,
+        "content" => Rule::content,
+        "text" => Rule::text,
+        "WHITESPACE" => Rule::WHITESPACE,
+        _ => return Err(ParseError::InvalidRule(rule.to_string())),
+    };
+
+    let mut pairs = HtmlParser::parse(rule_enum, input)?;
+
+    if let Some(pair) = pairs.next() {
+        Ok(pair)
+    } else {
+        Err(ParseError::NoMatchingRule(rule.to_string()))
+    }
 }
 
 /// Processes the `elements` rule and returns a vector of `Node` objects.
