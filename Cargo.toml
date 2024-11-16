@@ -1,6 +1,6 @@
 [package]
 name = "html_parser_tarasenko"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "Базовий HTML-парсер на Rust з використанням Pest"
 repository = "https://github.com/MishaTarasenko/RustParser"
